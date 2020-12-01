@@ -11,18 +11,18 @@ import com.norida.amazonviewer.model.Magazine;
 import com.norida.amazonviewer.model.Movie;
 import com.norida.amazonviewer.model.Serie;
 import com.norida.makeReport.Report;
+import com.norida.util.AmazonUtil;
 
 public class Main {
+	
+	public static boolean salida = true;
 
 	public static void main(String[] args) {
 		
-		//Movie movie = new Movie("Coco","Animation",(short)2017);
-		
+	if (salida == true) {	
 		showMenu();
-		
-		Movie movie = new Movie("Coco", "Animation","Lee Unkrich", 120, (short)2017);
-		movie.showData();
-		//System.out.println(movie);
+	}	
+
 	
 	}
 	public static void showMenu() {
@@ -44,8 +44,7 @@ public class Main {
 			System.out.println("0. Exit");
 			System.out.println(" ");
 			
-			int op = sc.nextInt();
-			
+			int op = AmazonUtil.validateUserResponseMenu(0, 6);
 			//int op=2;
 			switch (op) {
 			case 1:
@@ -68,19 +67,20 @@ public class Main {
 				break;
 			case 0:
 				System.out.println("saliste del sistema!");
+				sc.close();
 				exit = 0;
+				salida = false;
 				break;
-			
-
-
 			default:
 				break;
 			}
 			
 		}while(exit!=0);
+		System.out.println("salida ciclo while" + salida);
 		
 	}
-	static ArrayList<Movie> movies = Movie.makeMoviesList();;
+	
+	static ArrayList<Movie> movies = Movie.makeMoviesList();
 	public static void showMovies() {
 		int exit= 1;
 	
@@ -97,11 +97,12 @@ public class Main {
 			System.out.println();
 			
 			// LEER RESPUESTA DEL USUARIO
-			Scanner sc = new Scanner(System.in);
-			int response = sc.nextInt();
+			int response = AmazonUtil.validateUserResponseMenu(0, movies.size());
 			
 			if (response ==0) {
+				exit = 0;
 				showMenu();
+				break;
 			}
 			
 			if (response>0) {
@@ -118,10 +119,8 @@ public class Main {
 			//Termino de verlo
 			movieSelected.stopToSee(dateI, new Date());
 			System.out.println();
-			
 			System.out.println("Viste: "+ movieSelected);
 			System.out.println("por: "+ movieSelected.getTimeViewed()+ " milisegundos");
-		
 			}
 		} while (exit !=0);
 	}
@@ -140,32 +139,19 @@ public class Main {
 			System.out.println();
 			
 			// LEER RESPUESTA DEL USUARIO
-			Scanner sc = new Scanner(System.in);
-			int response = sc.nextInt();
+			int response = AmazonUtil.validateUserResponseMenu(0, series.size());
 			
-			if (response ==0) {
-				showMenu();
-			}
-				showChapters(series.get(response-1).getChapters());
+				if(response == 0) {
+					exit = 0;
+					showMenu();
+				}
+			
+				if(response > 0) {
+					showChapters(series.get(response-1).getChapters());
+				}
 			
 			
-			
-			Serie serieSelected = series.get(response-1);
-			serieSelected.setViewed(true);
-			serieSelected.getChapters();
-			/*Date dateI = serieSelected.starToSee(new Date());
-			
-			for (int i = 0; i < 100000; i++) {
-				System.out.println("................");
-			}
-			
-			//Termino de verlo
-			movieSelected.stopToSee(dateI, new Date());
-			System.out.println();
-			
-			System.out.println("Viste: "+ movieSelected);
-			System.out.println("por: "+ movieSelected.getTimeViewed()+ " milisegundos");*/
-		} while (exit !=0);
+		}while(exit !=0);
 		
 	}
 	
@@ -185,35 +171,33 @@ public class Main {
 			System.out.println();
 			
 			// LEER RESPUESTA DEL USUARIO
-			Scanner sc = new Scanner(System.in);
-			int response = sc.nextInt();
+			int response = AmazonUtil.validateUserResponseMenu(0, chaptersOfSeriesSelected.size());
 			
-			if (response ==0) {
-				showSeries();
-			}
+				if(response == 0) {
+					exit = 0;
+				}
 			
-			Chapter chapterSelected = chaptersOfSeriesSelected.get(response-1);
-			chapterSelected.setViewed(true);
-			Date dateI = chapterSelected.starToSee(new Date());
 			
-			for (int i = 0; i < 100000; i++) {
-				System.out.println("................");
-			}
-			
-			//Termino de verlo
-			chapterSelected.stopToSee(dateI, new Date());
-			System.out.println();
-			
-			System.out.println("Viste: "+ chapterSelected);
-			System.out.println("por: "+ chapterSelected.getTimeViewed()+ " milisegundos");
-			
-			showSeries();
-			
-		} while (exit !=0);
+				if(response > 0) {
+					Chapter chapterSelected = chaptersOfSeriesSelected.get(response-1);
+					chapterSelected.setViewed(true);
+					Date dateI = chapterSelected.starToSee(new Date());
+					
+					for (int i = 0; i < 100000; i++) {
+						System.out.println("..........");
+					}
+					
+					//Termine de verla
+					chapterSelected.stopToSee(dateI, new Date());
+					System.out.println();
+					System.out.println("Viste: " + chapterSelected);
+					System.out.println("Por: " + chapterSelected.getTimeViewed() + " milisegundos");
+				}
+		}while(exit !=0);
 	}
 	
 	public static void showBooks() {
-		int exit= 0;
+		int exit= 1;
 		ArrayList<Book> books = Book.makeBooksList();
 		do {
 			System.out.println();
@@ -228,28 +212,30 @@ public class Main {
 			System.out.println();
 			
 			// LEER RESPUESTA DEL USUARIO
-			Scanner sc = new Scanner(System.in);
-			int response = sc.nextInt();
+			int response = AmazonUtil.validateUserResponseMenu(0, books.size());
 			
-			if (response ==0) {
-				showMenu();
+				if(response == 0) {
+					exit = 0;
+					showMenu();
+				}
+				
+				if(response > 0) {
+					Book bookSelected = books.get(response-1);
+					bookSelected.setReaded(true);
+					Date dateI = bookSelected.starToSee(new Date());
+					
+					for (int i = 0; i < 100000; i++) {
+						System.out.println("..........");
+					}
+					
+					//Termine de verla
+					bookSelected.stopToSee(dateI, new Date());
+					System.out.println();
+					System.out.println("Leíste: " + bookSelected);
+					System.out.println("Por: " + bookSelected.getTimeReaded() + " milisegundos");
 			}
 			
-			Book bookSelected = books.get(response-1);
-			bookSelected.setReaded(true);
-			Date dateI = bookSelected.starToSee(new Date());
-			
-			for (int i = 0; i < 1000000; i++) {
-				System.out.println("................");
-			}
-			
-			//Termino de verlo
-			bookSelected.stopToSee(dateI, new Date());
-			System.out.println();
-			
-			System.out.println("Leiste: "+ bookSelected);
-			System.out.println("por: "+ bookSelected.getTimeReaded()+ " milisegundos");
-		} while (exit !=0);
+		}while(exit !=0);
 	}
 	
 	public static void showMagazine() {
@@ -268,17 +254,15 @@ public class Main {
 			System.out.println();
 			
 			// LEER RESPUESTA DEL USUARIO
-			Scanner sc = new Scanner(System.in);
-			int response = sc.nextInt();
+			int response = AmazonUtil.validateUserResponseMenu(0, 0);
 			
-			if (response ==0) {
-				showMenu();
-			}
+				if(response == 0) {
+					exit = 0;
+					showMenu();
+				}
+				
 			
-			Magazine magazineSelected = magazines.get(response-1);
-			
-			
-		} while (exit !=0);
+		}while(exit !=0);
 	}
 
 	public static void makeReport() {
